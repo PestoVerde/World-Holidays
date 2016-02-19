@@ -39,6 +39,7 @@ l <- list(color = toRGB("grey"), width = 0.5)
 g <- list(
     showframe = FALSE,
     showcoastlines = FALSE,
+    plot_bgcolor = "black",
     projection = list(type = 'Mercator')
 )
 
@@ -49,9 +50,7 @@ plot_ly(noh, z = Freq, text = Var1, locations = code, type = 'choropleth',
 
 
 
-#Plotly API
-#Username PestoVerde
-#API key l0xtx3r7xu
+
 
 
 
