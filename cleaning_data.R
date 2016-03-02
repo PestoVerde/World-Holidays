@@ -58,4 +58,17 @@ noh$rel <- ifelse(noh$notes == "Christmas", 1,
                   ifelse(noh$notes == "Ramadan", 2,
                          ifelse(noh$notes == "Both", 3, 4)))
 
-save(noh, file = "noh.Rdata")
+save(noh, file = "noh.RData")
+
+
+
+#Preparing map data
+libs <- c("maps", "mapdata", "dplyr")
+sapply(libs, library, character.only = T, logical.return = T, 
+       quietly = T, warn.conflicts = F)
+
+w <- map_data("world")
+w$code <- countrycode(w$region, "country.name", "iso3c")
+w <- left_join(w, noh, by = "code")
+
+save(w, file = "w.RData")

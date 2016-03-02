@@ -1,20 +1,14 @@
 #Attaching libraries
-libs <- c("shiny", "plotly", 
-          "ggplot2", "ggmap", 
-          "maps", "mapdata", 
-          "countrycode", "dplyr")
+libs <- c("shiny", "plotly", "ggplot2", "ggmap")
+
 sapply(libs, library, character.only = T, logical.return = T, 
        quietly = T, warn.conflicts = F)
 
 #Loading data
 load('noh.RData')
+load('w.RData')
 
 shinyServer(function(input, output){
-    
-#Preparing map data
-    w <- map_data("world")
-    w$code <- countrycode(w$region, "country.name", "iso3c")
-    w <- left_join(w, noh, by = "code")
 
 #Choosing amount of Indian holidays        
     dataset <- reactive({

@@ -7,3 +7,5 @@ Before run code of cleaning_data.R please:
 2. Put it to working directory
 
 3. Run cleaning_data.R
+
+The app can be seen at https://pestoverde.shinyapps.io/World-Holidays/
