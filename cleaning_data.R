@@ -1,4 +1,4 @@
-setwd("/Users/scherkasov/Documents/OneDrive/r_working_d/FUN/World Holidays")
+setwd("/Users/scherkasov/Documents/OneDrive/r_working_d/World-Holidays")
 
 #Data is from https://modeanalytics.com/reference_lookups/tables/holidays_by_country
 #with quiery request "SELECT * FROM reference_lookups.holidays_by_country"
@@ -25,33 +25,37 @@ a <- a[-which(a$country == ""),]
 
 #Now let us calculate number of holidays
 noh <- as.data.frame(table(a$country))
+names(noh) <- c("Country", "Number.of.Holidays")
 
 #Let us assign country codes to country names, we can not use maps without those codes
 library(countrycode)
-noh$code <- countrycode(noh$Var1, "country.name", "iso3c")
+noh$code <- countrycode(noh$Country, "country.name", "iso3c")
 noh <- noh[!is.na(noh$code),]
 
-library(plotly)
+#Here we add new column. All numbers of holydays are the same but only goverment
+#holydays are counted for India (3 instead of 77)
+noh$Freq1 <- noh$Number.of.Holidays
+noh$Freq1[which(noh$Country == "India")] <- 3
 
-#Let us build map
-l <- list(color = toRGB("grey"), width = 0.5)
+#Now let us creat row with Christmas, Ramadam or Both
+a$notes <- ""
+a$notes[grep("Christmas", a$holiday)] <- "Christmas"
+a$notes[grep("Ramadan", a$holiday)] <- "Ramadan"
+a <- a[which(a$notes != ""),]
+a <- a[, -c(2:5)]
 
-g <- list(
-    showframe = FALSE,
-    showcoastlines = FALSE,
-    plot_bgcolor = "black",
-    projection = list(type = 'Mercator')
-)
+library(reshape2)
+a <- recast(a, country ~ notes, id.var = c("country", "notes"))
+a$notes <- ifelse(a$Christmas > 0 & a$Ramadan == 0, "Christmas", 
+                  ifelse(a$Christmas == 0 & a$Ramadan > 0, "Ramadan", "Both"))
+a <- a[,-c(2:3)]
+names(a)[1] <- "Country"
+library(dplyr)
+noh <- left_join(noh, a, by = "Country")
+noh$notes[is.na(noh$notes)] <- "None"
 
-plot_ly(noh, z = Freq, text = Var1, locations = code, type = 'choropleth', 
-        color = Freq, colors = 'Greens', marker = list(line = l), 
-        colorbar = list(title = 'Number of holidays')) %>% layout(geo = g)
+noh$rel <- ifelse(noh$notes == "Christmas", 1, 
+                  ifelse(noh$notes == "Ramadan", 2,
+                         ifelse(noh$notes == "Both", 3, 4)))
 
-
-
-
-
-
-
-
-
+save(noh, file = "noh.Rdata")

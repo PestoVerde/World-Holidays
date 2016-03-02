@@ -3,25 +3,27 @@ library(plotly)
 
 shinyUI(navbarPage(theme = "bootstrap.min.css", "World Holidays",
                    tabPanel("Map",
-                            sidebarLayout(
-                                
-                                sidebarPanel(
-                                    radioButtons("radio", 
-                                                 label = h3("Radio button"),
-                                                 choices = list("All Indian holidays" = 1,
-                                                                "National Indian holidays" = 2,
-                                                                "Christmas" = 3,
-                                                                "Prophet's birthday" = 4,
-                                                                "Both Christmas and Prophet's birthday" = 5),
-                                                 selected = 1)#radiButtons
-                                ),#sidebarPanel
-                                
-                                mainPanel(
-                                    plotOutput("distPlot")
-                                )#mainPanel
-                            )#sidebarLayout
-                            ),#tabPanel(Map)
-                   tabPanel("Documentation",
+                            bootstrapPage(radioButtons("radio", 
+                                                       label = h4("Options",
+                                                                  h6("see Documentation & Credits tab for details")),
+                                                       choices = list("All Indian holidays" = 1,
+                                                                      "National Indian holidays" = 2),
+                                                       selected = 1),#radioButtons
+                                          plotlyOutput('trendPlot')
+                            )#bootstrapPage
+                   ),#tabPanel(Map)
+                   
+                   tabPanel("Christmas / Ramadan", 
+                            fluidRow(
+                                column(12, plotOutput("distPlot"))
+                            )
+                   ),
+                   
+                   tabPanel("Data Set", 
+                            dataTableOutput("table1")
+                   ),#tabPanel(Data Set)
+                   
+                   tabPanel("Documentation & Credits",
                             p("India is multiconfessional country and respects
                               all the confessions. That is why there are 77
                               holydays in a year. This number is outlier.
@@ -33,9 +35,7 @@ shinyUI(navbarPage(theme = "bootstrap.min.css", "World Holidays",
                             p("When you hover your cursor over the map, you
                               can see information about countries' holidays."),
                             p("Code can be found at", a("GitHub",
-                            href="https://github.com/PestoVerde/World-Holidays"))
-                            ),
-                   tabPanel("Credits",
+                                                        href="https://github.com/PestoVerde/World-Holidays")),
                             p("Thank team of", 
                               a("ModelAnalytic", 
                                 href="https://about.modeanalytics.com"),
